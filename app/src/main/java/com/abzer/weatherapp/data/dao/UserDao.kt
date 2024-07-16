@@ -2,31 +2,27 @@ package com.abzer.weatherapp.data.dao
 
 import androidx.room.Dao
 import androidx.room.Delete
-import androidx.room.Insert
-import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Update
+import androidx.room.Upsert
 import com.abzer.weatherapp.data.model.User
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface UserDao {
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun addUser(user: User)
+    @Upsert
+    suspend fun addOrUpdateUser(user: User): Long
 
     @Query("SELECT * FROM users WHERE email = :email LIMIT 1")
-    fun findUserByEmail(email: String): User?
+    fun isUserExist(email: String): User?
 
     @Query("SELECT * FROM users WHERE email = :email AND password = :password LIMIT 1")
-    fun findUser(email: String, password: String): User?
-
-    @Update
-    suspend fun updateUser(userId: User)
+    fun findUserByPassword(email: String, password: String): User?
 
     @Delete
-    suspend fun deleteUser(user: User)
+    suspend fun deleteUser(user: User): Int
 
     @Query("SELECT * FROM users")
-    suspend fun getUsers(): List<User>
+    fun getAllUsers(): Flow<List<User>>
 
 }

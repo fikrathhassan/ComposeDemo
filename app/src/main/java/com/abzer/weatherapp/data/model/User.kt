@@ -13,43 +13,43 @@ data class User(
 
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id")
-    val id: Int? = null,
+    val id: Long?,
 
     @ColumnInfo(name = "name")
-    val name: String? = null,
+    val name: String?,
 
     @ColumnInfo(name = "email")
-    val email: String? = null,
+    val email: String?,
 
     @ColumnInfo(name = "password")
-    val password: String? = null,
+    val password: String?,
 
     @ColumnInfo(name = "phone")
     val phone: String? = null,
 
 ): Parcelable {
 
-    fun checkNameIsNotEmpty(): Boolean {
-        return name?.isNotBlank() == true
+    fun checkNameIsEmpty(): Boolean {
+        return name?.isBlank() == true
     }
 
-    fun checkEmailIsNotEmpty(): Boolean {
-        return email?.isNotBlank() == true
+    fun checkEmailIsEmpty(): Boolean {
+        return email?.isBlank() == true
     }
 
-    fun checkEmailIsValid(): Boolean {
-        return Patterns.EMAIL_ADDRESS.matcher(email ?: "").matches()
+    fun checkEmailIsNotValid(): Boolean {
+        return !Patterns.EMAIL_ADDRESS.matcher(email ?: "").matches()
     }
 
-    fun checkPasswordIsNotEmpty(): Boolean {
-        return password?.isNotBlank()  == true
+    fun checkPasswordIsEmpty(): Boolean {
+        return password?.isBlank() == true
     }
 
-    fun checkPhoneIsNotEmpty(): Boolean {
-        return phone != null
+    fun checkPhoneIsEmpty(): Boolean {
+        return phone == null
     }
 
-    fun checkPhoneIsValid(): Boolean {
-        return phone?.length == 10
+    fun checkPhoneIsNotValid(): Boolean {
+        return phone?.length != 10
     }
 }

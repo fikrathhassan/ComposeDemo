@@ -8,16 +8,16 @@ data class Credentials(
     var staySignedIn: Boolean = false
 ) {
 
-    fun checkEmailIsNotEmpty(): Boolean {
-        return email.isNotBlank()
+    fun checkEmailIsEmpty(): Boolean {
+        return email.isBlank()
     }
 
-    fun checkEmailIsValid(): Boolean {
-        return Patterns.EMAIL_ADDRESS.matcher(email).matches()
+    fun checkEmailIsNotValid(): Boolean {
+        return !Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
 
-    fun checkPasswordIsNotEmpty(): Boolean {
-        return password.isNotBlank()
+    fun checkPasswordIsEmpty(): Boolean {
+        return password.isBlank()
     }
 
 }

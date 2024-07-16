@@ -23,6 +23,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemColors
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -35,6 +36,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -84,6 +87,58 @@ fun BackPressCompose(
 }
 
 /**
+ * Background
+ */
+@Composable
+fun Background(
+    content: @Composable () -> Unit
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Image(
+            modifier = Modifier
+                .matchParentSize(),
+            painter = painterResource(R.drawable.background),
+            contentDescription = null,
+            contentScale = ContentScale.FillBounds
+        )
+        content()
+    }
+}
+@Composable
+fun BackgroundWithBottomNavigation(
+    navController: NavController,
+    isAdminUser: Boolean,
+    content: @Composable () -> Unit
+) {
+    Background {
+        Scaffold(
+            modifier = Modifier
+                .fillMaxSize(),
+            containerColor = Color.Transparent,
+            bottomBar = {
+                BottomNavigationBar(
+                    navController = navController,
+                    isAdminUser = isAdminUser
+                )
+            }
+        ) {
+            Box(
+                modifier = Modifier
+                    .padding(it)
+                    .fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                content()
+            }
+        }
+    }
+}
+
+/**
  * Progress loader
  */
 
@@ -107,6 +162,13 @@ fun FullScreenProgressLoader() {
         )
     }
 }
+@Preview(showSystemUi = true)
+@Composable
+fun FullScreenProgressLoaderPreview() {
+    AppTheme {
+        FullScreenProgressLoader()
+    }
+}
 
 @Composable
 fun ProgressLoader() {
@@ -118,12 +180,11 @@ fun ProgressLoader() {
         strokeWidth = AppTheme.dimens.progressbar_stroke,
     )
 }
-
-@Preview(showSystemUi = true)
+@Preview
 @Composable
 fun ProgressLoaderPreview() {
     AppTheme {
-        FullScreenProgressLoader()
+        ProgressLoader()
     }
 }
 
@@ -153,6 +214,16 @@ fun PrimaryButton(
         Text(
             text = buttonText,
             fontSize = AppTheme.fontDimens.bodyPrimary
+        )
+    }
+}
+@Preview
+@Composable
+fun PrimaryButtonPreview() {
+    AppTheme {
+        PrimaryButton(
+            buttonText = "Submit",
+            onClick = {}
         )
     }
 }
@@ -189,12 +260,10 @@ data class NavigationItem(
     val icon: ImageVector? = null,
     val title: Int? = null
 ) {
-    fun navigationItems(): List<NavigationItem> {
-        return listOf(
+    fun navigationItems() = listOf(
             NavigationItem(AppScreens.HOME.route, Icons.Filled.Home, R.string.home),
             NavigationItem(AppScreens.USERS.route, Icons.Filled.ManageAccounts, R.string.users)
         )
-    }
 }
 
 @Composable
@@ -202,19 +271,18 @@ fun BottomNavigationBar(
     navController: NavController,
     isAdminUser: Boolean
 ) {
+    println("isAdminUser: $isAdminUser")
 
     NavigationBar(
         containerColor = Color.White,
         modifier = Modifier
             .fillMaxWidth(),
     ) {
-
         NavigationItem().navigationItems().forEach { item ->
 
-            if (item.route?.equals(AppScreens.USERS.route) == true) {
-                if (!isAdminUser) {
-                    return@forEach
-                }
+            if (item.route?.equals(AppScreens.USERS.route, true) == true
+                && !isAdminUser) {
+                return@forEach
             }
 
             val isSelected = navController.currentBackStackEntryAsState().value?.destination?.hierarchy?.any {
@@ -259,5 +327,4 @@ fun BottomNavigationBar(
             )
         }
     }
-
 }
